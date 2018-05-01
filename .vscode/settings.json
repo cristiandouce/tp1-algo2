@@ -1,0 +1,23 @@
+{
+  "files.associations": {
+    "*.latex": "latex",
+    "iostream": "cpp",
+    "iosfwd": "cpp",
+    "algorithm": "cpp",
+    "__locale": "cpp",
+    "istream": "cpp",
+    "streambuf": "cpp",
+    "iterator": "cpp",
+    "vector": "cpp",
+    "__string": "cpp",
+    "ios": "cpp",
+    "__split_buffer": "cpp",
+    "bitset": "cpp",
+    "initializer_list": "cpp",
+    "string": "cpp",
+    "string_view": "cpp",
+    "utility": "cpp",
+    "__bit_reference": "cpp"
+  },
+  "C_Cpp.intelliSenseEngineFallback": "Enabled"
+}

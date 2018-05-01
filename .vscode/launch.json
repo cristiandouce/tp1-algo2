@@ -1,0 +1,62 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "DFT ones",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/tp0",
+      "args": ["-i", "./test/ones.input.txt", "-o", "./test/ones.output.txt", "-m", "DFT"],
+      "preLaunchTask": "build",
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb"
+    },
+    {
+      "name": "IDFT ones",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/tp0",
+      "args": ["-i", "./test/ones.output.txt", "-o", "./test/ones.input.back.txt", "-m", "IDFT"],
+      "preLaunchTask": "build",
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb"
+    },
+    {
+      "name": "DFT ones win10",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/tp0",
+      "args": ["-i", "./test/ones.input.txt", "-o", "./test/ones.output.txt", "-m", "DFT"],
+      "preLaunchTask": "build_win10",
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "windows": {
+         "MIMode": "gdb",
+         "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
+      }
+    },
+    {
+      "name": "IDFT ones win10",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/tp0",
+      "args": ["-i", "./test/ones.output.txt", "-o", "./test/ones.input.back.txt", "-m", "IDFT"],
+      "preLaunchTask": "build_win10",
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "windows": {
+         "MIMode": "gdb",
+         "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
+      }
+    }       
+  ]
+}
