@@ -6,7 +6,7 @@
     {
       "label": "build",
       "type": "shell",
-      "command": "g++ -g -v ./main.cpp -o ./bin/tp0",
+      "command": "g++ -g -v ./main.cpp -o ./bin/tp1",
       "group": {
         "kind": "build",
         "isDefault": true
@@ -16,12 +16,12 @@
     {
       "label": "build_win10",
       "type": "shell",
-      "command": "g++ -static-libgcc -static-libstdc++ -g -v ./main.cpp -o ./bin/tp0",
+      "command": "g++ -static-libgcc -static-libstdc++ -g -v ./main.cpp -o ./bin/tp1",
       "group": {
         "kind": "build",
         "isDefault": true
       },
       "problemMatcher": "$gcc"
-    }    
+    }
   ]
 }

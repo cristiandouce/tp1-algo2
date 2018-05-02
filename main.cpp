@@ -149,7 +149,7 @@ opt_method(string const &arg) {
 
 static void
 opt_help(string const &arg) {
-	cout << "tp0 [-m method] [-i file] [-o file]"
+	cout << "tp1 [-m method] [-i file] [-o file]"
 	     << endl;
 	exit(0);
 }
