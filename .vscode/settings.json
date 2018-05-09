@@ -32,7 +32,9 @@
     "cstdlib": "cpp",
     "ostream": "cpp",
     "functional": "cpp",
-    "array": "cpp"
+    "array": "cpp",
+    "fstream": "cpp",
+    "locale": "cpp"
   },
   "C_Cpp.intelliSenseEngineFallback": "Enabled"
 }

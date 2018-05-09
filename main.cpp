@@ -18,8 +18,8 @@
 #include <string>
 #include <algorithm>
 
-#include "vendor/complejo.cpp"
 #include "vendor/cmdline.cpp"
+#include "src/fourier.cpp"
 
 using namespace std;
 
@@ -94,10 +94,7 @@ opt_input(string const &arg) {
 	// Verificamos que el stream este OK.
 	//
 	if (!iss->good()) {
-		cerr << "cannot open "
-		     << arg
-		     << "."
-		     << endl;
+		cerr << "cannot open " << arg << "." << endl;
 		// EXIT: Terminacion del programa en su totalidad
 		exit(1);
 	}
@@ -148,143 +145,6 @@ opt_help(string const &arg) {
 	exit(0);
 }
 
-/**
- * @brief Escribe linea de de salida desde el vector procesado
- *
- * @param p_os
- * @param vector
- * @return int
- */
-int
-write_signal_line(ostream *p_os, vector<complejo> & salida) {
-	int ret = 0;
-	vector<complejo>::iterator it = salida.begin();
-
-	do {
-		*p_os << *it << " ";
-		it += 1;
-	} while (it != salida.end());
-
-	*p_os << endl;
-
-	return ret;
-}
-
-/**
- * @brief Lee linea de entrada y agrega valores complejos al vector
- *
- * @param p_is puntero a input stream
- * @param v vector de complejos
- * @return int
- */
-int
-parse_signal_line(istream *p_is, vector<complejo> & v) {
-	complejo a;
-	string line;
-
-	getline(*p_is, line);
-
-	stringstream linestream(line);
-
-	while ( linestream >> a ) {
-		v.push_back(a);
-	}
-
-	// Error de formato en input
-	if (linestream.bad()) {
-		cerr << "cannot read from input stream."
-		     << endl;
-		exit(1);
-	}
-
-	// Chequeo fin de archivo
-	if( p_is->eof() ){
-		return 0;
-	}
-
-	return 0;
-}
-
-void
-DFT(vector<complejo> &entrada, vector<complejo> &salida, int inverse = 0) {
-	// NOTE: retorno rapido si no hay nada que procesar
-	//       en el arreglo de entrada.
-	if (entrada.size() == 0) { return; }
-
-	double k, n, N = entrada.size();
-	double arg, norm = inverse ? 1/N : 1;
-	complejo acum, j = inverse ? complejo(0, -1) : complejo(0, 1);
-	vector<complejo>::iterator x;
-
-	for (k = 0 ; k < N; ++k) {
-		// arranco en el primer elemento
-		x = entrada.begin();
-		acum = 0;
-		n = 0;
-
-		// repito hasta el ultimo elemento de entrada
-		// la sumatoria de los x[n] * W(kn, N)
-		do {
-			arg = 2 * M_PI * k * n / N;
-			acum += (*x) * (cos(arg) + j.conjugado() * sin(arg));
-			n += 1;
-			x +=1;
-		} while(x != entrada.end());
-
-		// multiplicamos por el normalizador que
-		// corresponda segun el modo
-		acum *= norm;
-
-		// agrego el acumulado a la salida
-		salida.push_back(acum);
-	}
-}
-
-int
-process(istream *p_is, ostream *p_os) {
-	int inputReturn = -1;
-	int outputReturn = -1;
-
-	vector<complejo> vectorEntrada;
-	vector<complejo> vectorSalida;
-
-	if(NULL == p_is) {
-		cerr << "Error: Puntero NULL" << endl;
-		return 1;
-	}
-
-	while(!p_is->eof()) {
-		// NOTE: Vaciamos los vectores de ayuda antes de
-		//			 usarlos para procesar las senales.
-		vectorEntrada.clear();
-		vectorSalida.clear();
-
-		// Proceso el stream de entrada y escribo en
-		// vectorEntrada
-		inputReturn = parse_signal_line(p_is, vectorEntrada);
-
-		// TODO: Cuando hay un error de formato de 1 linea leida
-		//		     1. Se continua con la siguiente?
-		//			   2. Se termina el programa?
-		//			 Actualmente se termina la ejecucion ya que no hay
-		//			 forma de volver del archivo de salida al original.
-		if (inputReturn == 1) {
-			return 1;
-		}
-
-		// NOTE: Si la lectura fue exitosa, escribimos la salida
-		//			 en el ostream seleccionado.
-		// TODO: Determinar qué hacer con el resultado de la
-		//			 escritura a ostream. Manejo de errores?
-		if (inputReturn == 0 && vectorEntrada.size() != 0) {
-			DFT(vectorEntrada, vectorSalida, method == "DFT" ? 0 : 1);
-			write_signal_line(p_os, vectorSalida);
-		}
-	}
-
-	return 0;
-}
-
 int
 main(int argc, char * const argv[]) {
 	// Objeto con parametro tipo option_t (struct) declarado globalmente. Ver linea 51 main.cc
@@ -292,11 +152,18 @@ main(int argc, char * const argv[]) {
 	cmdline cmdl(options);
 	cmdl.parse(argc, argv);
 
-	if (process(iss, oss)) {
-		ifs.close();
-		ofs.close();
-		return 1;
-	}
+	ft *myft = new ft(iss, oss);
+
+	if (method == "FFT")
+		myft = new fft(iss, oss);
+	else if (method == "IFFT")
+		myft = new ifft(iss, oss);
+	if (method == "IDFT")
+		myft = new idft(iss, oss);
+	else
+		myft = new dft(iss, oss);
+
+	myft->compute();
 
 	ifs.close();
 	ofs.close();
