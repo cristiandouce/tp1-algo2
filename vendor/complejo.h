@@ -2,6 +2,7 @@
 #define _COMPLEJO_H_INCLUDED_
 
 #include <iostream>
+#include <iomanip>
 
 class complejo {
 	double re_, im_;

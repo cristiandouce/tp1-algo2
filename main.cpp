@@ -65,7 +65,7 @@ static option_t options[] = {
 	{ 0, },
 };
 
-static string metodo;
+static string method;
 static istream *iss = 0;	// Input Stream (clase para manejo de los flujos de entrada)
 static ostream *oss = 0;	// Output Stream (clase para manejo de los flujos de salida)
 static fstream ifs; 		  // Input File Stream (derivada de la clase ifstream que deriva de istream para el manejo de archivos)
@@ -131,20 +131,14 @@ opt_output(string const &arg) {
 
 static void
 opt_method(string const &arg) {
-	// Intentamos extraer el metodo de la linea de comandos (DFT o IDFT).
-	//
-	if (arg == "DFT") {
-		// Establezco metodo como DFT
-		metodo = "dft";
-	} else if (arg == "IDFT") {
-		// Establezco metodo como IDFT
-		metodo = "idft";
-	} else {
-		cerr << "cannot read method."
-		     << endl;
-		// EXIT: Terminacion del programa en su totalidad
-		exit(1);
+	string valid_methods[] = { "DFT", "IDFT", "FFT", "IFFT" };
+	if (find(begin(valid_methods), end(valid_methods), arg)) {
+		method = arg;
+		return;
 	}
+
+	cerr << "La opcion 'method' provista es invalida." << endl;
+	exit(1);
 }
 
 static void
@@ -180,11 +174,11 @@ write_signal_line(ostream *p_os, vector<complejo> & salida) {
  * @brief Lee linea de entrada y agrega valores complejos al vector
  *
  * @param p_is puntero a input stream
- * @param vector vector de complejos
+ * @param v vector de complejos
  * @return int
  */
 int
-parse_signal_line(istream *p_is, vector<complejo> & vector) {
+parse_signal_line(istream *p_is, vector<complejo> & v) {
 	complejo a;
 	string line;
 
@@ -193,7 +187,7 @@ parse_signal_line(istream *p_is, vector<complejo> & vector) {
 	stringstream linestream(line);
 
 	while ( linestream >> a ) {
-		vector.push_back(a);
+		v.push_back(a);
 	}
 
 	// Error de formato en input
@@ -283,7 +277,7 @@ process(istream *p_is, ostream *p_os) {
 		// TODO: Determinar qué hacer con el resultado de la
 		//			 escritura a ostream. Manejo de errores?
 		if (inputReturn == 0 && vectorEntrada.size() != 0) {
-			DFT(vectorEntrada, vectorSalida, metodo == "dft" ? 0 : 1);
+			DFT(vectorEntrada, vectorSalida, method == "DFT" ? 0 : 1);
 			write_signal_line(p_os, vectorSalida);
 		}
 	}
