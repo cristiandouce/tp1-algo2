@@ -51,14 +51,61 @@ class ft {
 		}
 
 		complejo get_exp_complejo() {
-			// NOTE: Este metodo debería ser implementado
-			//			 por la estrategia que hereda.
 			return inverse() ? complejo(0, -1) : complejo(0, 1);
 		}
 
-		void algorithm() {
-			// NOTE: este metodo debería ser implementado por la
-			//			 estrategia seleccionada.
+		virtual bool inverse() = 0;
+
+		virtual void run_algorithm() = 0;
+
+	// public members
+	public:
+		ft() {
+			cout << "ft::ft()" << endl;
+			is_ = &cin;
+			os_ = &cout;
+		}
+
+		ft(istream *is) {
+			cout << "ft::ft(istream)" << endl;
+			is_ = is;
+			os_ = &cout;
+		}
+
+		ft(ostream *os) {
+			cout << "ft::ft(ostream)" << endl;
+			is_ = &cin;
+			os_ = os;
+		}
+
+		ft(istream *is, ostream *os) {
+			cout << "ft::ft(istream, ostream)" << endl;
+			is_ = is;
+			os_ = os;
+		}
+
+		~ft() {
+			cout << "ft::~ft()" << endl;
+		}
+
+		void compute() {
+			while(!is_->eof()) {
+				read_input_line();
+				run_algorithm();
+			}
+		}
+};
+
+class dft : public ft {
+	// private members
+
+	// protected members
+	protected:
+		virtual bool inverse() {
+			return false;
+		}
+
+		virtual void run_algorithm() {
 			// NOTE: retorno rapido si no hay nada que procesar
 			//       en el arreglo de input_.
 			if (input_.size() == 0) { return; }
@@ -99,55 +146,6 @@ class ft {
 
 	// public members
 	public:
-		ft() {
-			cout << "ft::ft()" << endl;
-			is_ = &cin;
-			os_ = &cout;
-		}
-
-		ft(istream *is) {
-			cout << "ft::ft(istream)" << endl;
-			is_ = is;
-			os_ = &cout;
-		}
-
-		ft(ostream *os) {
-			cout << "ft::ft(ostream)" << endl;
-			is_ = &cin;
-			os_ = os;
-		}
-
-		ft(istream *is, ostream *os) {
-			cout << "ft::ft(istream, ostream)" << endl;
-			is_ = is;
-			os_ = os;
-		}
-
-		~ft() {
-			cout << "ft::~ft()" << endl;
-		}
-
-		// virtual void compute() = 0;
-		// virtual void algorithm() = 0;
-		virtual bool inverse() {
-			return false;
-		}
-
-		void compute() {
-			while(!is_->eof()) {
-				read_input_line();
-				algorithm();
-			}
-		}
-};
-
-class dft : public ft {
-	// private members
-
-	// protected members
-
-	// public members
-	public:
 		dft() {
 			cout << "dft::dft()" << endl;
 			is_ = &cin;
@@ -175,16 +173,20 @@ class dft : public ft {
 		~dft() {
 			cout << "dft::~dft()" << endl;
 		}
-
-		virtual bool inverse() {
-			return false;
-		}
 };
 
-class idft : public ft {
+class idft : public dft {
 	// private members
 
 	// protected members
+	protected:
+		virtual bool inverse() {
+			return true;
+		}
+
+		virtual void run_algorithm() {
+			dft::run_algorithm();
+		}
 
 	// public members
 	public:
@@ -215,16 +217,20 @@ class idft : public ft {
 		~idft() {
 			cout << "idft::~idft()" << endl;
 		}
-
-		virtual bool inverse() {
-			return true;
-		}
 };
 
-class fft : public ft {
+class fft : public dft {
 	// private members
 
 	// protected members
+	protected:
+		virtual bool inverse() {
+			return false;
+		}
+
+		virtual void run_algorithm() {
+			dft::run_algorithm();
+		}
 
 	// public members
 	public:
@@ -255,16 +261,20 @@ class fft : public ft {
 		~fft() {
 			cout << "fft::~fft()" << endl;
 		}
-
-		virtual bool inverse() {
-			return false;
-		}
 };
 
-class ifft : public ft {
+class ifft : public fft {
 	// private members
 
 	// protected members
+	protected:
+		virtual bool inverse() {
+			return true;
+		}
+
+		virtual void run_algorithm() {
+			fft::run_algorithm();
+		}
 
 	// public members
 	public:
@@ -294,9 +304,5 @@ class ifft : public ft {
 
 		~ifft() {
 			cout << "ifft::~ifft()" << endl;
-		}
-
-		virtual bool inverse() {
-			return true;
 		}
 };

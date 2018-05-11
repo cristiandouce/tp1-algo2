@@ -152,7 +152,7 @@ main(int argc, char * const argv[]) {
 	cmdline cmdl(options);
 	cmdl.parse(argc, argv);
 
-	ft *myft = new ft(iss, oss);
+	ft *myft = 0;
 
 	if (method == "FFT")
 		myft = new fft(iss, oss);
