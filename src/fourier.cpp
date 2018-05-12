@@ -1,6 +1,6 @@
-#include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <cstdlib>
 
@@ -84,7 +84,7 @@ class ft {
 			os_ = os;
 		}
 
-		~ft() {
+		virtual ~ft() {
 			cout << "ft::~ft()" << endl;
 		}
 
@@ -219,7 +219,7 @@ class idft : public dft {
 		}
 };
 
-class fft : public dft {
+class fft : public ft {
 	// private members
 
 	// protected members
@@ -229,7 +229,64 @@ class fft : public dft {
 		}
 
 		virtual void run_algorithm() {
-			dft::run_algorithm();
+			vector<complejo> X = recursive_algorithm(input_);
+			vector<complejo>::iterator it = X.begin();
+
+			do {
+				*os_ << *it << " ";
+				it++;
+			} while(it != X.end());
+
+			*os_ << endl;
+		}
+
+		vector<complejo> recursive_algorithm(vector<complejo> &v) {
+			double N = v.size();
+
+			if (N == 1) {
+				return v;
+			}
+
+			int m = N/2;
+
+			vector<complejo> v_even_parts;
+			vector<complejo> v_odd_parts;
+			particion(v, v_even_parts, v_odd_parts);
+
+			vector<complejo> G = recursive_algorithm(v_even_parts);
+			vector<complejo> H = recursive_algorithm(v_odd_parts);
+
+			// TODO: La estructura actual es la esperada para la descomposicion
+			//			 division y recursion (DyV) del algoritmo. Los elementos restantes
+			//			 se listan en la siguiente lista:
+			//				- Implementar el conjugado segun inverso o directo
+			//  			- Implementar el normalizador 1/N o 1 segun inverso o directo
+			//  			- Implementar recomposicion ordenada de las partes par/impar
+			return recompone(G, H, m);
+		}
+
+		void particion(vector<complejo> &v, vector<complejo> &even, vector<complejo> &odd) {
+			int N = v.size();
+			int i = 0;
+			vector<complejo>::iterator it = v.begin();
+
+			do {
+				if (i % 2) {
+					odd.push_back(*it);
+				} else {
+					even.push_back(*it);
+				}
+
+				i++;
+				it++;
+			} while (it != v.end());
+		}
+
+		vector<complejo> recompone(vector<complejo> &G, vector<complejo> &H, int m) {
+			vector<complejo> X;
+			X.insert(X.end(), G.begin(), G.end());
+			X.insert(X.end(), H.begin(), H.end());
+			return X;
 		}
 
 	// public members

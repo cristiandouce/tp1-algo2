@@ -154,17 +154,19 @@ main(int argc, char * const argv[]) {
 
 	ft *myft = 0;
 
-	if (method == "FFT")
+	if (method == "FFT") {
 		myft = new fft(iss, oss);
-	else if (method == "IFFT")
+	} else if (method == "IFFT") {
 		myft = new ifft(iss, oss);
-	if (method == "IDFT")
+	} else if (method == "IDFT") {
 		myft = new idft(iss, oss);
-	else
+	} else {
 		myft = new dft(iss, oss);
+	}
 
 	myft->compute();
 
+	delete myft;
 	ifs.close();
 	ofs.close();
 	return 0;
