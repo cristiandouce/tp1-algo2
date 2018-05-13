@@ -31,6 +31,32 @@
       "MIMode": "lldb"
     },
     {
+      "name": "FFT ones",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/tp1",
+      "args": ["-i", "./test/ones.input.txt", "-o", "./test/ones.output.txt", "-m", "FFT"],
+      "preLaunchTask": "build",
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb"
+    },
+    {
+      "name": "IFFT ones",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/tp1",
+      "args": ["-i", "./test/ones.output.txt", "-o", "./test/ones.input.back.txt", "-m", "IFFT"],
+      "preLaunchTask": "build",
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb"
+    },
+    {
       "name": "DFT ones win10",
       "type": "cppdbg",
       "request": "launch",

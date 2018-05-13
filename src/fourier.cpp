@@ -1,6 +1,6 @@
-#include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <cstdlib>
 
@@ -51,14 +51,61 @@ class ft {
 		}
 
 		complejo get_exp_complejo() {
-			// NOTE: Este metodo debería ser implementado
-			//			 por la estrategia que hereda.
 			return inverse() ? complejo(0, -1) : complejo(0, 1);
 		}
 
-		void algorithm() {
-			// NOTE: este metodo debería ser implementado por la
-			//			 estrategia seleccionada.
+		virtual bool inverse() = 0;
+
+		virtual void run_algorithm() = 0;
+
+	// public members
+	public:
+		ft() {
+			cout << "ft::ft()" << endl;
+			is_ = &cin;
+			os_ = &cout;
+		}
+
+		ft(istream *is) {
+			cout << "ft::ft(istream)" << endl;
+			is_ = is;
+			os_ = &cout;
+		}
+
+		ft(ostream *os) {
+			cout << "ft::ft(ostream)" << endl;
+			is_ = &cin;
+			os_ = os;
+		}
+
+		ft(istream *is, ostream *os) {
+			cout << "ft::ft(istream, ostream)" << endl;
+			is_ = is;
+			os_ = os;
+		}
+
+		virtual ~ft() {
+			cout << "ft::~ft()" << endl;
+		}
+
+		void compute() {
+			while(!is_->eof()) {
+				read_input_line();
+				run_algorithm();
+			}
+		}
+};
+
+class dft : public ft {
+	// private members
+
+	// protected members
+	protected:
+		virtual bool inverse() {
+			return false;
+		}
+
+		virtual void run_algorithm() {
 			// NOTE: retorno rapido si no hay nada que procesar
 			//       en el arreglo de input_.
 			if (input_.size() == 0) { return; }
@@ -99,55 +146,6 @@ class ft {
 
 	// public members
 	public:
-		ft() {
-			cout << "ft::ft()" << endl;
-			is_ = &cin;
-			os_ = &cout;
-		}
-
-		ft(istream *is) {
-			cout << "ft::ft(istream)" << endl;
-			is_ = is;
-			os_ = &cout;
-		}
-
-		ft(ostream *os) {
-			cout << "ft::ft(ostream)" << endl;
-			is_ = &cin;
-			os_ = os;
-		}
-
-		ft(istream *is, ostream *os) {
-			cout << "ft::ft(istream, ostream)" << endl;
-			is_ = is;
-			os_ = os;
-		}
-
-		~ft() {
-			cout << "ft::~ft()" << endl;
-		}
-
-		// virtual void compute() = 0;
-		// virtual void algorithm() = 0;
-		virtual bool inverse() {
-			return false;
-		}
-
-		void compute() {
-			while(!is_->eof()) {
-				read_input_line();
-				algorithm();
-			}
-		}
-};
-
-class dft : public ft {
-	// private members
-
-	// protected members
-
-	// public members
-	public:
 		dft() {
 			cout << "dft::dft()" << endl;
 			is_ = &cin;
@@ -175,16 +173,20 @@ class dft : public ft {
 		~dft() {
 			cout << "dft::~dft()" << endl;
 		}
-
-		virtual bool inverse() {
-			return false;
-		}
 };
 
-class idft : public ft {
+class idft : public dft {
 	// private members
 
 	// protected members
+	protected:
+		virtual bool inverse() {
+			return true;
+		}
+
+		virtual void run_algorithm() {
+			dft::run_algorithm();
+		}
 
 	// public members
 	public:
@@ -215,16 +217,77 @@ class idft : public ft {
 		~idft() {
 			cout << "idft::~idft()" << endl;
 		}
-
-		virtual bool inverse() {
-			return true;
-		}
 };
 
 class fft : public ft {
 	// private members
 
 	// protected members
+	protected:
+		virtual bool inverse() {
+			return false;
+		}
+
+		virtual void run_algorithm() {
+			vector<complejo> X = recursive_algorithm(input_);
+			vector<complejo>::iterator it = X.begin();
+
+			do {
+				*os_ << *it << " ";
+				it++;
+			} while(it != X.end());
+
+			*os_ << endl;
+		}
+
+		vector<complejo> recursive_algorithm(vector<complejo> &v) {
+			double N = v.size();
+
+			if (N == 1) {
+				return v;
+			}
+
+			int m = N/2;
+
+			vector<complejo> v_even_parts;
+			vector<complejo> v_odd_parts;
+			particion(v, v_even_parts, v_odd_parts);
+
+			vector<complejo> G = recursive_algorithm(v_even_parts);
+			vector<complejo> H = recursive_algorithm(v_odd_parts);
+
+			// TODO: La estructura actual es la esperada para la descomposicion
+			//			 division y recursion (DyV) del algoritmo. Los elementos restantes
+			//			 se listan en la siguiente lista:
+			//				- Implementar el conjugado segun inverso o directo
+			//  			- Implementar el normalizador 1/N o 1 segun inverso o directo
+			//  			- Implementar recomposicion ordenada de las partes par/impar
+			return recompone(G, H, m);
+		}
+
+		void particion(vector<complejo> &v, vector<complejo> &even, vector<complejo> &odd) {
+			int N = v.size();
+			int i = 0;
+			vector<complejo>::iterator it = v.begin();
+
+			do {
+				if (i % 2) {
+					odd.push_back(*it);
+				} else {
+					even.push_back(*it);
+				}
+
+				i++;
+				it++;
+			} while (it != v.end());
+		}
+
+		vector<complejo> recompone(vector<complejo> &G, vector<complejo> &H, int m) {
+			vector<complejo> X;
+			X.insert(X.end(), G.begin(), G.end());
+			X.insert(X.end(), H.begin(), H.end());
+			return X;
+		}
 
 	// public members
 	public:
@@ -255,16 +318,20 @@ class fft : public ft {
 		~fft() {
 			cout << "fft::~fft()" << endl;
 		}
-
-		virtual bool inverse() {
-			return false;
-		}
 };
 
-class ifft : public ft {
+class ifft : public fft {
 	// private members
 
 	// protected members
+	protected:
+		virtual bool inverse() {
+			return true;
+		}
+
+		virtual void run_algorithm() {
+			fft::run_algorithm();
+		}
 
 	// public members
 	public:
@@ -294,9 +361,5 @@ class ifft : public ft {
 
 		~ifft() {
 			cout << "ifft::~ifft()" << endl;
-		}
-
-		virtual bool inverse() {
-			return true;
 		}
 };
