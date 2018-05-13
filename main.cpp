@@ -18,7 +18,8 @@
 #include <string>
 #include <algorithm>
 
-#include "vendor/cmdline.cpp"
+#include "vendor/cmdline.h"
+#include "vendor/complejo.h"
 #include "src/fourier.cpp"
 
 using namespace std;

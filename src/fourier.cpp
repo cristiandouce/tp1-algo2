@@ -3,11 +3,11 @@
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
-
+#include <cmath>
 #include <string>
 #include <vector>
 
-#include "../vendor/complejo.cpp"
+#include "../vendor/complejo.h"
 
 using namespace std;
 
