@@ -128,14 +128,27 @@ opt_output(string const &arg) {
 
 static void
 opt_method(string const &arg) {
-	string valid_methods[] = { "DFT", "IDFT", "FFT", "IFFT" };
-	if (find(begin(valid_methods), end(valid_methods), arg)) {
-		method = arg;
-		return;
-	}
 
-	cerr << "La opcion 'method' provista es invalida." << endl;
-	exit(1);
+	// Intentamos extraer el metodo de la linea de comandos (DFT, IDFT, FFT o IFFT). 
+	// 
+	if (arg == "DFT") { 
+		// Establezco metodo como DFT 
+		method = "dft"; 
+	} else if (arg == "IDFT") { 
+		// Establezco metodo como IDFT 
+		method = "idft"; 
+	} else if (arg == "FFT") { 
+		// Establezco metodo como IDFT 
+		method = "fft"; 
+	} else if (arg == "IFFT") { 
+		// Establezco metodo como IDFT 
+		method = "ifft"; 				
+	} else { 
+		cerr << "La opcion 'method' provista es invalida." 
+			<< endl; 
+		// EXIT: Terminacion del programa en su totalidad 
+		exit(1); 
+	}
 }
 
 static void
