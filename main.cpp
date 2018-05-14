@@ -14,7 +14,6 @@
 #include <sstream>
 #include <cstdlib>
 
-#include <vector>
 #include <string>
 #include <algorithm>
 
