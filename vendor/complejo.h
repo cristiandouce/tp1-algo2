@@ -28,7 +28,7 @@ class complejo {
 
 		friend complejo const operator+(complejo const &, complejo const &);
 		friend complejo const operator-(complejo const &, complejo const &);
-		friend complejo const operator*(complejo const &, complejo const &);
+		friend complejo const operator*(complejo const &, complejo const &);		
 		friend complejo const operator/(complejo const &, complejo const &);
 		friend complejo const operator/(complejo const &, double);
 

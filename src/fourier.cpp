@@ -4,6 +4,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <cmath>
+#include <complex>
 #include <string>
 #include "../vendor/lista.h"
 #include "../vendor/complejo.h"
@@ -63,32 +64,27 @@ class ft {
 
 	// public members
 	public:
-		ft() {
-			cout << "ft::ft()" << endl;
+		ft() {			
 			is_ = &cin;
 			os_ = &cout;
 		}
 
-		ft(istream *is) {
-			cout << "ft::ft(istream)" << endl;
+		ft(istream *is) {			
 			is_ = is;
 			os_ = &cout;
 		}
 
-		ft(ostream *os) {
-			cout << "ft::ft(ostream)" << endl;
+		ft(ostream *os) {			
 			is_ = &cin;
 			os_ = os;
 		}
 
-		ft(istream *is, ostream *os) {
-			cout << "ft::ft(istream, ostream)" << endl;
+		ft(istream *is, ostream *os) {			
 			is_ = is;
 			os_ = os;
 		}
 
-		virtual ~ft() {
-			cout << "ft::~ft()" << endl;
+		virtual ~ft() {			
 		}
 
 		void compute() {
@@ -131,7 +127,7 @@ class dft : public ft {
 					acum += (x.dato()) * (cos(arg) + j.conjugado() * sin(arg));
 					n += 1;
 					x.avanzar();
-				} while(x != input_.ultimo());
+				} while( !x.extremo() );
 
 				// multiplicamos por el normalizador que
 				// corresponda segun el modo
@@ -149,32 +145,27 @@ class dft : public ft {
 
 	// public members
 	public:
-		dft() {
-			cout << "dft::dft()" << endl;
+		dft() {			
 			is_ = &cin;
 			os_ = &cout;
 		}
 
-		dft(istream *is) {
-			cout << "dft::dft(istream)" << endl;
+		dft(istream *is) {			
 			is_ = is;
 			os_ = &cout;
 		}
 
-		dft(ostream *os) {
-			cout << "dft::dft(ostream)" << endl;
+		dft(ostream *os) {			
 			is_ = &cin;
 			os_ = os;
 		}
 
-		dft(istream *is, ostream *os) {
-			cout << "dft::dft(istream, ostream)" << endl;
+		dft(istream *is, ostream *os) {			
 			is_ = is;
 			os_ = os;
 		}
 
-		~dft() {
-			cout << "dft::~dft()" << endl;
+		~dft() {			
 		}
 };
 
@@ -193,32 +184,27 @@ class idft : public dft {
 
 	// public members
 	public:
-		idft() {
-			cout << "idft::idft()" << endl;
+		idft() {			
 			is_ = &cin;
 			os_ = &cout;
 		}
 
-		idft(istream *is) {
-			cout << "idft::idft(istream)" << endl;
+		idft(istream *is) {			
 			is_ = is;
 			os_ = &cout;
 		}
 
-		idft(ostream *os) {
-			cout << "idft::idft(ostream)" << endl;
+		idft(ostream *os) {			
 			is_ = &cin;
 			os_ = os;
 		}
 
-		idft(istream *is, ostream *os) {
-			cout << "idft::idft(istream, ostream)" << endl;
+		idft(istream *is, ostream *os) {			
 			is_ = is;
 			os_ = os;
 		}
 
-		~idft() {
-			cout << "idft::~idft()" << endl;
+		~idft() {			
 		}
 };
 
@@ -235,22 +221,20 @@ class fft : public ft {
 			lista<complejo> X = recursive_algorithm(input_);
 			lista<complejo>::iterador it = X.primero();
 
-			do {
+			while(!it.extremo()){
 				*os_ << it.dato() << " ";
 				it.avanzar();
-			} while(it != X.ultimo());
+			} 
 
 			*os_ << endl;
 		}
 
 		lista<complejo> recursive_algorithm(lista<complejo> &v) {
-			double N = v.tamano();
+			int N = v.tamano();
 
-			if (N == 1) {
+			if (N <= 1) {
 				return v;
-			}
-
-			int m = N/2;
+			}			
 
 			lista<complejo> v_even_parts;
 			lista<complejo> v_odd_parts;
@@ -265,7 +249,7 @@ class fft : public ft {
 			//				- Implementar el conjugado segun inverso o directo
 			//  			- Implementar el normalizador 1/N o 1 segun inverso o directo
 			//  			- Implementar recomposicion ordenada de las partes par/impar
-			return recompone(G, H, m);
+			return recompone(G, H, N);
 		}
 
 		void particion(lista<complejo> &v, lista<complejo> &even, lista<complejo> &odd) {
@@ -286,44 +270,77 @@ class fft : public ft {
 
 				i++;
 				it.avanzar();
-			} while (it != v.ultimo());
+			} while (!it.extremo());
 		}
 
-		lista<complejo> recompone(lista<complejo> &G, lista<complejo> &H, int m) {
+		lista<complejo> recompone(lista<complejo> &G, lista<complejo> &H, int N) {
 			lista<complejo> X;
-			//X.insert(X.end(), G.begin(), G.end());
-			//X.insert(X.end(), H.begin(), H.end());
+
+			lista<complejo>::iterador it_G = G.primero();
+			lista<complejo>::iterador it_H = H.primero();
+			lista<complejo>::iterador it_X = X.ultimo();
+
+			double arg, norm = get_norm();			
+			complejo j = get_exp_complejo();
+			complejo w;
+
+			// combine
+			//Para X[k] con 0 < k < N/2
+			for (int k = 0; k < N/2; ++k)
+			{
+				arg = 2 * M_PI * k  / N;
+				w = (cos(arg) + j.conjugado() * sin(arg));
+			
+				complejo t = w * it_H.dato();
+				//X.insertar_despues( (it_G.dato()+t) * norm ,it_X);
+				X.insertar_despues(it_G.dato()+t,it_X);
+				if(!it_G.extremo()) it_G.avanzar();
+				if(!it_H.extremo()) it_H.avanzar();	
+				it_X = X.ultimo();
+			}	
+
+			it_G = G.primero();
+			it_H = H.primero();
+
+			//Para X[k] con N/2 < k < N
+			for (int k = 0; k < N/2; ++k)
+			{
+				arg = 2 * M_PI * k  / N;
+				w = (cos(arg) + j.conjugado() * sin(arg));
+			
+				complejo t = w * it_H.dato();
+				//X.insertar_despues( (it_G.dato()-t) * norm ,it_X);
+				X.insertar_despues(it_G.dato()-t,it_X);
+				if(!it_G.extremo()) it_G.avanzar();
+				if(!it_H.extremo()) it_H.avanzar();	
+				it_X = X.ultimo();
+			}	
 			return X;
 		}
 
 	// public members
 	public:
-		fft() {
-			cout << "fft::fft()" << endl;
+		fft() {			
 			is_ = &cin;
 			os_ = &cout;
 		}
 
-		fft(istream *is) {
-			cout << "fft::fft(istream)" << endl;
+		fft(istream *is) {			
 			is_ = is;
 			os_ = &cout;
 		}
 
-		fft(ostream *os) {
-			cout << "fft::fft(ostream)" << endl;
+		fft(ostream *os) {			
 			is_ = &cin;
 			os_ = os;
 		}
 
-		fft(istream *is, ostream *os) {
-			cout << "fft::fft(istream, ostream)" << endl;
+		fft(istream *is, ostream *os) {			
 			is_ = is;
 			os_ = os;
 		}
 
-		~fft() {
-			cout << "fft::~fft()" << endl;
+		~fft() {			
 		}
 };
 
@@ -342,31 +359,26 @@ class ifft : public fft {
 
 	// public members
 	public:
-		ifft() {
-			cout << "ifft::ifft()" << endl;
+		ifft() {			
 			is_ = &cin;
 			os_ = &cout;
 		}
 
 		ifft(istream *is) {
-			cout << "ifft::ifft(istream)" << endl;
 			is_ = is;
 			os_ = &cout;
 		}
 
-		ifft(ostream *os) {
-			cout << "ifft::ifft(ostream)" << endl;
+		ifft(ostream *os) {			
 			is_ = &cin;
 			os_ = os;
 		}
 
-		ifft(istream *is, ostream *os) {
-			cout << "ifft::ifft(istream, ostream)" << endl;
+		ifft(istream *is, ostream *os) {			
 			is_ = is;
 			os_ = os;
 		}
 
-		~ifft() {
-			cout << "ifft::~ifft()" << endl;
+		~ifft() {			
 		}
 };

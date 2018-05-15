@@ -3,6 +3,7 @@ set  binPath=C:\Users\daj\ProyectosVSC\tp1-algo2\tp1-algo2\bin
 
 del %testPath%\*_dft.txt
 del %testPath%\*_idft.txt
+
 pause
 
 rem Tests nuestros
@@ -62,7 +63,6 @@ pause
 
 %binPath%\tp1.exe -i %testPath%\Frecuencia1_dft.txt -o %testPath%\Frecuencia1_idft.txt -m IDFT
 pause
-
 
 %binPath%\tp1.exe -i %testPath%\TFrecuencia3B.txt -o %testPath%\TFrecuencia3B_dft.txt
 pause

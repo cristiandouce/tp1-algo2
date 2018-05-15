@@ -83,6 +83,34 @@
          "MIMode": "gdb",
          "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
       }
+    },
+    {
+      "name": "FFT ones win10",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/tp1",
+      "args": ["-i", "./test/ones.input.txt", "-o", "./test/ones.output.FFT.txt", "-m", "FFT"],
+      "preLaunchTask": "build_win10",
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "windows": {
+         "MIMode": "gdb",
+         "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
+      }
+    },
+    {
+      "name": "IFFT ones win10",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/tp1",
+      "args": ["-i", "./test/ones.output.FFT.txt", "-o", "./test/ones.input.back.IFFT.txt", "-m", "IFFT"],
+      "preLaunchTask": "build_win10",
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "windows": {
+         "MIMode": "gdb",
+         "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
+      }
     }
   ]
 }
