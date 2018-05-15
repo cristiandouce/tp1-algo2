@@ -111,6 +111,34 @@
          "MIMode": "gdb",
          "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
       }
+    },
+    {
+      "name": "FFT big win10",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/tp1",
+      "args": ["-i", "./test/Tbwavfs11025.txt", "-o", "./test/Tbwavfs11025_FFT.txt", "-m", "FFT"],
+      "preLaunchTask": "build_win10",
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "windows": {
+         "MIMode": "gdb",
+         "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
+      }
+    },
+    {
+      "name": "IFFT big win10",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/tp1",
+      "args": ["-i", "./test/Tbwavfs11025_FFT.txt", "-o", "./test/Tbwavfs11025_IFFT.txt", "-m", "IFFT"],
+      "preLaunchTask": "build_win10",
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "windows": {
+         "MIMode": "gdb",
+         "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
+      }
     }
   ]
 }

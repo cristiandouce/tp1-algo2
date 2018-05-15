@@ -220,9 +220,11 @@ class fft : public ft {
 		virtual void run_algorithm() {
 			lista<complejo> X = recursive_algorithm(input_);
 			lista<complejo>::iterador it = X.primero();
+	
+			double norm = get_norm();
 
 			while(!it.extremo()){
-				*os_ << it.dato() << " ";
+				*os_ << it.dato() * norm << " ";
 				it.avanzar();
 			} 
 
@@ -280,7 +282,7 @@ class fft : public ft {
 			lista<complejo>::iterador it_H = H.primero();
 			lista<complejo>::iterador it_X = X.ultimo();
 
-			double arg, norm = get_norm();			
+			double arg;
 			complejo j = get_exp_complejo();
 			complejo w;
 
@@ -292,7 +294,7 @@ class fft : public ft {
 				w = (cos(arg) + j.conjugado() * sin(arg));
 			
 				complejo t = w * it_H.dato();
-				//X.insertar_despues( (it_G.dato()+t) * norm ,it_X);
+				//X.insertar_despues( (it_G.dato()+t) * norm ,it_X);				
 				X.insertar_despues(it_G.dato()+t,it_X);
 				if(!it_G.extremo()) it_G.avanzar();
 				if(!it_H.extremo()) it_H.avanzar();	
@@ -309,7 +311,7 @@ class fft : public ft {
 				w = (cos(arg) + j.conjugado() * sin(arg));
 			
 				complejo t = w * it_H.dato();
-				//X.insertar_despues( (it_G.dato()-t) * norm ,it_X);
+				//X.insertar_despues( (it_G.dato()-t) * norm ,it_X);				
 				X.insertar_despues(it_G.dato()-t,it_X);
 				if(!it_G.extremo()) it_G.avanzar();
 				if(!it_H.extremo()) it_H.avanzar();	
