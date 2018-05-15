@@ -16,7 +16,7 @@
     {
       "label": "build_win10",
       "type": "shell",
-      "command": "g++ -static-libgcc -static-libstdc++ -g -v ./main.cpp -o ./bin/tp1",
+      "command": "g++ -static-libgcc -static-libstdc++ -g ./main.cpp ./vendor/cmdline.cpp ./vendor/complejo.cpp -o ./bin/tp1",
       "group": {
         "kind": "build",
         "isDefault": true

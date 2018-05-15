@@ -3,11 +3,10 @@
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
-
+#include <cmath>
 #include <string>
-#include <vector>
-
-#include "../vendor/complejo.cpp"
+#include "../vendor/lista.h"
+#include "../vendor/complejo.h"
 
 using namespace std;
 
@@ -16,7 +15,7 @@ class ft {
 
 	// protected members
 	protected:
-		vector<complejo> input_;
+		lista<complejo> input_;
 		istream *is_;
 		ostream *os_;
 
@@ -28,13 +27,17 @@ class ft {
 
 			stringstream linestream(line);
 
-			// nos aseguramos que el input_ vector
+			// nos aseguramos que el input_ lista
 			// este siempre vacío antes de empezar.
 			input_.clear();
 
+			lista<complejo>::iterador it;
+			it = input_.ultimo();
+
 			// leemos cada valor
 			while(linestream >> aux) {
-				input_.push_back(aux);
+				input_.insertar_despues(aux, it);
+				it = input_.ultimo();
 			}
 
 			// Error de formato en input stream.
@@ -46,7 +49,7 @@ class ft {
 		}
 
 		double get_norm () {
-			double N = input_.size();
+			double N = input_.tamano();
 			return inverse() && (N > 0) ? 1/N : 1;
 		}
 
@@ -108,16 +111,16 @@ class dft : public ft {
 		virtual void run_algorithm() {
 			// NOTE: retorno rapido si no hay nada que procesar
 			//       en el arreglo de input_.
-			if (input_.size() == 0) { return; }
+			if (input_.tamano() == 0) { return; }
 
-			double k, n, N = input_.size();
+			double k, n, N = input_.tamano();
 			double arg, norm = get_norm();
 			complejo acum, j = get_exp_complejo();
-			vector<complejo>::iterator x;
+			lista<complejo>::iterador x;
 
 			for (k = 0 ; k < N; ++k) {
 				// arranco en el primer elemento
-				x = input_.begin();
+				x = input_.primero();
 				acum = 0;
 				n = 0;
 
@@ -125,10 +128,10 @@ class dft : public ft {
 				// la sumatoria de los x[n] * W(kn, N)
 				do {
 					arg = 2 * M_PI * k * n / N;
-					acum += (*x) * (cos(arg) + j.conjugado() * sin(arg));
+					acum += (x.dato()) * (cos(arg) + j.conjugado() * sin(arg));
 					n += 1;
-					x +=1;
-				} while(x != input_.end());
+					x.avanzar();
+				} while(x != input_.ultimo());
 
 				// multiplicamos por el normalizador que
 				// corresponda segun el modo
@@ -229,19 +232,19 @@ class fft : public ft {
 		}
 
 		virtual void run_algorithm() {
-			vector<complejo> X = recursive_algorithm(input_);
-			vector<complejo>::iterator it = X.begin();
+			lista<complejo> X = recursive_algorithm(input_);
+			lista<complejo>::iterador it = X.primero();
 
 			do {
-				*os_ << *it << " ";
-				it++;
-			} while(it != X.end());
+				*os_ << it.dato() << " ";
+				it.avanzar();
+			} while(it != X.ultimo());
 
 			*os_ << endl;
 		}
 
-		vector<complejo> recursive_algorithm(vector<complejo> &v) {
-			double N = v.size();
+		lista<complejo> recursive_algorithm(lista<complejo> &v) {
+			double N = v.tamano();
 
 			if (N == 1) {
 				return v;
@@ -249,12 +252,12 @@ class fft : public ft {
 
 			int m = N/2;
 
-			vector<complejo> v_even_parts;
-			vector<complejo> v_odd_parts;
+			lista<complejo> v_even_parts;
+			lista<complejo> v_odd_parts;
 			particion(v, v_even_parts, v_odd_parts);
 
-			vector<complejo> G = recursive_algorithm(v_even_parts);
-			vector<complejo> H = recursive_algorithm(v_odd_parts);
+			lista<complejo> G = recursive_algorithm(v_even_parts);
+			lista<complejo> H = recursive_algorithm(v_odd_parts);
 
 			// TODO: La estructura actual es la esperada para la descomposicion
 			//			 division y recursion (DyV) del algoritmo. Los elementos restantes
@@ -265,27 +268,31 @@ class fft : public ft {
 			return recompone(G, H, m);
 		}
 
-		void particion(vector<complejo> &v, vector<complejo> &even, vector<complejo> &odd) {
-			int N = v.size();
+		void particion(lista<complejo> &v, lista<complejo> &even, lista<complejo> &odd) {
+			int N = v.tamano();
 			int i = 0;
-			vector<complejo>::iterator it = v.begin();
+			lista<complejo>::iterador it = v.primero();
+			lista<complejo>::iterador itOdd;
+			lista<complejo>::iterador itEven;
 
 			do {
 				if (i % 2) {
-					odd.push_back(*it);
+					itOdd = odd.ultimo();
+					odd.insertar_despues(it.dato(),itOdd);
 				} else {
-					even.push_back(*it);
+					itEven = even.ultimo();
+					even.insertar_despues(it.dato(),itEven);
 				}
 
 				i++;
-				it++;
-			} while (it != v.end());
+				it.avanzar();
+			} while (it != v.ultimo());
 		}
 
-		vector<complejo> recompone(vector<complejo> &G, vector<complejo> &H, int m) {
-			vector<complejo> X;
-			X.insert(X.end(), G.begin(), G.end());
-			X.insert(X.end(), H.begin(), H.end());
+		lista<complejo> recompone(lista<complejo> &G, lista<complejo> &H, int m) {
+			lista<complejo> X;
+			//X.insert(X.end(), G.begin(), G.end());
+			//X.insert(X.end(), H.begin(), H.end());
 			return X;
 		}
 
