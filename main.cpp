@@ -169,14 +169,14 @@ main(int argc, char * const argv[]) {
 
 	ft *myft = 0;
 
-	if (method == FFT) {
-		myft = new fft(iss, oss);
-	} else if (method == IFFT) {
-		myft = new ifft(iss, oss);
+	if (method == DFT) {
+		myft = new dft(iss, oss);
 	} else if (method == IDFT) {
 		myft = new idft(iss, oss);
+	} else if (method == IFFT) {
+		myft = new ifft(iss, oss);
 	} else {
-		myft = new dft(iss, oss);
+		myft = new fft(iss, oss);
 	}
 
 	myft->compute();
