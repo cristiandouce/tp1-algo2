@@ -65,7 +65,9 @@ static option_t options[] = {
 	{ 0, },
 };
 
-static string method;
+enum Methods {DFT,IDFT,FFT,IFFT}; 
+
+static Methods method;
 static istream *iss = 0;	// Input Stream (clase para manejo de los flujos de entrada)
 static ostream *oss = 0;	// Output Stream (clase para manejo de los flujos de salida)
 static fstream ifs; 		  // Input File Stream (derivada de la clase ifstream que deriva de istream para el manejo de archivos)
@@ -133,16 +135,16 @@ opt_method(string const &arg) {
 	// 
 	if (arg == "DFT") { 
 		// Establezco metodo como DFT 
-		method = "dft"; 
+		method = DFT; 
 	} else if (arg == "IDFT") { 
 		// Establezco metodo como IDFT 
-		method = "idft"; 
+		method = IDFT; 
 	} else if (arg == "FFT") { 
 		// Establezco metodo como IDFT 
-		method = "fft"; 
+		method = FFT; 
 	} else if (arg == "IFFT") { 
 		// Establezco metodo como IDFT 
-		method = "ifft"; 				
+		method = IFFT; 				
 	} else { 
 		cerr << "La opcion 'method' provista es invalida." 
 			<< endl; 
@@ -167,11 +169,11 @@ main(int argc, char * const argv[]) {
 
 	ft *myft = 0;
 
-	if (method == "FFT") {
+	if (method == FFT) {
 		myft = new fft(iss, oss);
-	} else if (method == "IFFT") {
+	} else if (method == IFFT) {
 		myft = new ifft(iss, oss);
-	} else if (method == "IDFT") {
+	} else if (method == IDFT) {
 		myft = new idft(iss, oss);
 	} else {
 		myft = new dft(iss, oss);
