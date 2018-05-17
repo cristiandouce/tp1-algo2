@@ -41,6 +41,27 @@ class ft {
 				it = input_.ultimo();
 			}
 
+			// si la cantidad de elementos del vector no es potencia de 2, agregamos
+			// 0s hasta completar tamaño con proxima potencia de 2
+			unsigned int tam = input_.tamano();			
+			bool powerOfTwo = !(tam == 0) && !(tam & (tam - 1));
+			if( !powerOfTwo ){				
+				unsigned int v = tam;
+				v--;
+				v |= v >> 1;
+				v |= v >> 2;
+				v |= v >> 4;
+				v |= v >> 8;
+				v |= v >> 16;
+				v++;		
+
+				for(int i=0; i < (v-tam) ; i++){
+					complejo aux(0.0,0.0);
+					input_.insertar_despues(aux, it);
+					it = input_.ultimo();					
+				}
+			}
+
 			// Error de formato en input stream.
 			// Detenemos la ejecución del programa.
 			if (linestream.bad()) {
@@ -245,12 +266,6 @@ class fft : public ft {
 			lista<complejo> G = recursive_algorithm(v_even_parts);
 			lista<complejo> H = recursive_algorithm(v_odd_parts);
 
-			// TODO: La estructura actual es la esperada para la descomposicion
-			//			 division y recursion (DyV) del algoritmo. Los elementos restantes
-			//			 se listan en la siguiente lista:
-			//				- Implementar el conjugado segun inverso o directo
-			//  			- Implementar el normalizador 1/N o 1 segun inverso o directo
-			//  			- Implementar recomposicion ordenada de las partes par/impar
 			return recompone(G, H, N);
 		}
 
@@ -293,8 +308,7 @@ class fft : public ft {
 				arg = 2 * M_PI * k  / N;
 				w = (cos(arg) + j.conjugado() * sin(arg));
 			
-				complejo t = w * it_H.dato();
-				//X.insertar_despues( (it_G.dato()+t) * norm ,it_X);				
+				complejo t = w * it_H.dato();				
 				X.insertar_despues(it_G.dato()+t,it_X);
 				if(!it_G.extremo()) it_G.avanzar();
 				if(!it_H.extremo()) it_H.avanzar();	
@@ -310,8 +324,7 @@ class fft : public ft {
 				arg = 2 * M_PI * k  / N;
 				w = (cos(arg) + j.conjugado() * sin(arg));
 			
-				complejo t = w * it_H.dato();
-				//X.insertar_despues( (it_G.dato()-t) * norm ,it_X);				
+				complejo t = w * it_H.dato();				
 				X.insertar_despues(it_G.dato()-t,it_X);
 				if(!it_G.extremo()) it_G.avanzar();
 				if(!it_H.extremo()) it_H.avanzar();	

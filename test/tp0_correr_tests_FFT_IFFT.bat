@@ -56,7 +56,6 @@ pause
 %binPath%\tp1.exe -i %testPath%\TPulso_fft.txt -o %testPath%\TPulso_ifft.txt -m IFFT
 pause
 
-
 %binPath%\tp1.exe -i %testPath%\Frecuencia1.txt -o %testPath%\Frecuencia1_fft.txt -m FFT
 pause
 
@@ -68,7 +67,6 @@ pause
 
 %binPath%\tp1.exe -i %testPath%\TFrecuencia3B_fft.txt -o %testPath%\TFrecuencia3B_ifft.txt -m IFFT
 pause
-
 
 %binPath%\tp1.exe -i %testPath%\Tbwavfs11025.txt -o %testPath%\Tbwavfs11025_fft.txt -m FFT
 pause
